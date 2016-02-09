@@ -1,0 +1,6 @@
+# no test or compare files
+**/*.tst
+**/*.cmp
+
+#ignore the tools directory
+tools/
