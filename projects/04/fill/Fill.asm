@@ -12,7 +12,7 @@
 
 (INIT)
   @SCREEN
-  D=M
+  D=A
   @address
   M=D
   @KBD
@@ -27,13 +27,19 @@
   D=M
   @INIT
   D;JEQ
+  
   @address
-  D=M
+  A=M
   M=-1
-  @16
-  D=D+M
+
   @address
-  M=D
+  M=M+1
+  D=M
+  @KBD
+  D=D-A
+  @INIT
+  D;JEQ
+  
   @BLOOP
   0;JMP
 
@@ -42,13 +48,19 @@
   D=M
   @INIT
   D;JGT
+  
   @address
-  D=M
+  A=M
   M=0
-  @16
-  D=D+M
+  
   @address
-  M=D
+  M=M+1
+  D=M
+  @KBD
+  D=D-A
+  @INIT
+  D;JEQ
+  
   @WLOOP
   0;JMP
 
