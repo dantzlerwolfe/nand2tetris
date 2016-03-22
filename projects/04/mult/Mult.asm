@@ -32,3 +32,8 @@ M=D       // Preserve R0 by copying R0 into i
 (END)
   @END
   0;JMP
+
+  /* Notes from Nebkor
+
+  check for R0 or R1 = 0 up front
+  use registers directly, no i

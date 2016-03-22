@@ -39,5 +39,49 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+
+    // Registers
+    And(a=instruction[15], b=instruction[5], out=loadALoop);
+    Mux16(a=instruction, b=loopToA, sel=loadALoop, out=muxToA);
+    Not(in=instruction[15], out=aInstr, out=aInstr1);
+    Or(a=aInstr, b=loadALoop, out=loadA);
+    ARegister(in=muxToA, load=loadA, 
+        out=AtoMux, 
+        out=AtoPC,
+        out[0..14]=addressM);
+    And(a=instruction[15], b=instruction[4], out=loadDLoop);
+    DRegister(in=loopToD, load=loadDLoop, out=outD);
+
+    // Jump Instruction and Program Counter
+    Xor(a=zr, b=ng, out=outLE, out=outLE1);
+    Not(in=outLE, out=outGT, out=outGT1);
+    Xor(a=zr1, b=outGT, out=outGE);
+    Not(in=zr3, out=outNE);
+    Mux8Way(a=false, b=outGT1, c=zr2, d=outGE, 
+            e=ng1, f=outNE, g=outLE1, h=true,
+            sel=instruction[0..2], out=muxToLoad);
+    Mux(a=false, b=muxToLoad, sel=instruction[15], out=loadOut);
+    PC(in=AtoPC, load=loadOut, inc=true, reset=reset, out[0..14]=pc);
+   
+    // ALU
+    Mux16(a=AtoMux, b=inM, sel=instruction[12], out=outAM);
+    ALU(x=outD, y=outAM, 
+        zx=instruction[11],
+        nx=instruction[10],
+        zy=instruction[9],
+        ny=instruction[8],
+        f=instruction[7],
+        no=instruction[6],
+        out=outM,
+        out=loopToA,
+        out=loopToD,
+        zr=zr,
+        zr=zr1,
+        zr=zr2,
+        zr=zr3,
+        ng=ng,
+        ng=ng1);
+
+    // Write M?
+    And(a=instruction[15], b=instruction[3], out=writeM);
 }
